@@ -5,7 +5,7 @@ const PORT = 3000;
 app.use(express.json());
 
 app.use((req, res, next) => {
-  console.log(req.method, req.url, req.headers['content-type'], req.body, perfilAtual);
+  console.log(req.method, req.url, req.headers['content-type'], req.body);
   next();
 });
 
@@ -33,6 +33,7 @@ let usuarios = [
 
 let noticias = [ 
     {
+        id: 1,
         nome: "Chupacu avistado em plena luz do dia em Amapá",
         cidade: "Amapá",
         autor: "João Augusto",
@@ -108,11 +109,15 @@ app.get('/usuario', (req, res) => {
 })
 
 app.post('/comentario/postar', (req, res) => {
+    const {id} = req.query
     const comentario = req.body.comentario;
 
     if(!comentario || typeof comentario !== 'string'){
         return res.status(400).json({ erro: 'O comentario é obrigatorio e tem que ser uma string' });
     }
+
+    noticias[Number(id) - 1].comentario.push(comentario);
+    res.status(201).json({comentario: comentario});
 
 })
 
