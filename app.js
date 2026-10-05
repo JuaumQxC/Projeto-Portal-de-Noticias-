@@ -25,7 +25,7 @@ let usuarios = [
     {
         nome: "Lula",
         id: "131313131",
-        perfil: "leitor",
+        perfil: "moderador",
         senha: "P1CANHAG02T02A"
     },
     {
@@ -40,10 +40,10 @@ let usuarios = [
 let noticias = [ 
     {
         id: 1,
-        nome: "Chupacu avistado em plena luz do dia em Amapá",
+        nome: "Chupacabra avistado em plena luz do dia em Amapá",
         cidade: "Amapá",
         autor: "João Augusto",
-        comentarios: ["TOMA NO CU JOAO, SEU MENTIROSO DO CARAIO, NÃO TEM PORRA NENUMA DE CHUPACU AQUI NAO, SEU FUDIDO DE MERDA",],
+        comentarios: ["TOMA NO CU JOAO, SEU MENTIROSO DO CARAIO, NÃO TEM PORRA NENUMA DE CHUPACABRA AQUI NAO, SEU FUDIDO DE MERDA",],
         status: "publicado"
     },
 
@@ -132,15 +132,15 @@ app.get('/usuario', (req, res) => {
     res.json(usuarios);
 })
 
-app.post('/comentario/postar', (req, res) => {
-    const {id} = req.query
+app.post('/comentario/postar/:id', (req, res) => {
+    const {id} = req.params
     const comentario = req.body.comentario;
 
     if(!comentario || typeof comentario !== 'string'){
         return res.status(400).json({ erro: 'O comentario é obrigatorio e tem que ser uma string' });
     }
 
-    noticias[Number(id) - 1].comentario.push(comentario);
+    noticias[Number(id) - 1].comentarios.push(comentario);
     res.status(201).json({comentario: comentario});
 
 })
