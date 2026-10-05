@@ -5,7 +5,7 @@ const PORT = 3000;
 app.use(express.json());
 
 app.use((req, res, next) => {
-  console.log(req.method, req.url, req.headers['content-type'], req.body, perfilAtual);
+  console.log(req.method, req.url, req.headers['content-type'], req.body, perfilAtual, perfilNome);
   next();
 });
 
@@ -27,6 +27,12 @@ let usuarios = [
         id: "131313131",
         perfil: "leitor",
         senha: "P1CANHAG02T02A"
+    },
+    {
+        nome: "Jorge Lucas",
+        id: "229979771",
+        perfil: "autor",
+        senha: "041012"
     }
 ]
 
@@ -47,11 +53,13 @@ let noticias = [
         cidade: "Xique-xique",
         autor: "Jorge Lucas",
         comentarios: [],
-        status: "publicado"
+        status: "rascunho"
     }
 ]
 
-let perfilAtual = "moderador"
+let perfilAtual = "autor";
+let usuario;
+let perfilNome = "Jorge Lucas";
 
 app.get('/', (req, res) => {
   res.send('Bem-vindo ao PORTAL ZACARIAS!!!');
@@ -73,6 +81,7 @@ const usuario = encontrar[0];
 res.status(200).json({nome: usuario.nome, perfil: usuario.perfil});
 
 perfilAtual = usuario.perfil
+perfilNome = usuario.nome
 })
 
 app.get('/noticias', (req, res) => {
@@ -164,7 +173,7 @@ app.post('/comentario/deletar', (req, res) => {
     }
 
     const noticia = encontrar_id[0];
-    const indice = Noticia.comentarios.indexOf(comentario);
+    const indice = noticia.comentarios.indexOf(comentario);
 
     if(indice === -1){
         return res.status(404).json({ erro: 'Comentario não encontrado' });
@@ -177,6 +186,11 @@ app.post('/comentario/deletar', (req, res) => {
 app.post('/noticia/editar/:id', (req, res) => {
     const {id} = req.params
     const {nome, cidade, status} = req.body
+    const autorNoticia= noticias.filter(noticias => noticias.autor == perfilNome)
+
+    if (perfilAtual != "autor" && autorNoticia == []){
+        res.status(404).json("Erro, você não possui acesso para alterar esta noticia")
+    }
 
     if(!nome || typeof nome !== 'string'){
         return res.status(400).json({ erro: 'O nome é obrigatorio e tem que ser uma string' });
