@@ -38,7 +38,7 @@ let noticias = [
         cidade: "Amapá",
         autor: "João Augusto",
         comentarios: ["TOMA NO CU JOAO, SEU MENTIROSO DO CARAIO, NÃO TEM PORRA NENUMA DE CHUPACU AQUI NAO, SEU FUDIDO DE MERDA",],
-        status: "rascunho"
+        status: "publicado"
     },
 
     {
@@ -51,7 +51,7 @@ let noticias = [
     }
 ]
 
-let perfilAtual = "autor"
+let perfilAtual = "moderador"
 
 app.get('/', (req, res) => {
   res.send('Bem-vindo ao PORTAL ZACARIAS!!!');
@@ -146,11 +146,35 @@ app.get('/noticias/:id', (req, res) => {
     res.json(notProcura)
 })
 
-app.post('comentario/deletar', (req, res) => {
+app.post('/comentario/deletar', (req, res) => {
+    if(perfilAtual != "moderador"){
+        return res.status(401).json({ erro: 'Você não tem permissão para deletar um comentário.'})
+    }
     
-})
+    const {id, comentario} = req.body
+    
+    if(!id || typeof id !== 'number' || !comentario || typeof comentario !== 'string'){
+        return res.status(400).json({ erro: 'O id é obrigatorio e tem que ser um numero' });
+    }
 
-app.post('noticia/editar/:id', (req, res) => {
+    const encontrar_id = noticias.filter((n) => n.id === id)
+
+    if(encontrar_id.length === 0){
+        return res.status(404).json({ erro: 'Noticia não encontrada' });
+    }
+
+    const noticia = encontrar_id[0];
+    const indice = Noticia.comentarios.indexOf(comentario);
+
+    if(indice === -1){
+        return res.status(404).json({ erro: 'Comentario não encontrado' });
+    }
+
+    noticia.comentarios.splice(indice, 1);
+    res.status(200).json({mensagem: 'Comentario deletado com sucesso'})
+});
+
+app.post('/noticia/editar/:id', (req, res) => {
     const {id} = req.params
     const {nome, cidade, status} = req.body
 
@@ -167,12 +191,15 @@ app.post('noticia/editar/:id', (req, res) => {
     }
 
     const edicaoNot = {
+        id: id,
         nome: nome,
         cidade: cidade,
         status: status
     }
 
-    noticias[id].splice(id, 1, edicaoNot)
+    noticias.splice(parseInt(id), 1, edicaoNot)
+    
+    res.status(201).json({edicaoNot})
 })
 
 app.listen(PORT, () =>{
