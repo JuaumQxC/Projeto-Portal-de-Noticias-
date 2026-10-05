@@ -5,7 +5,7 @@ const PORT = 3000;
 app.use(express.json());
 
 app.use((req, res, next) => {
-  console.log(req.method, req.url, req.headers['content-type'], req.body);
+  console.log(req.method, req.url, req.headers['content-type'], req.body, perfilAtual);
   next();
 });
 
@@ -13,19 +13,19 @@ let usuarios = [
     {
         nome: "João Augusto",
         id: "123456789",
-        perfil: "leitor",
+        perfil: "autor",
         senha: "wo2342"
     },
     {
         nome: "Flávio Bolsonaro",
         id: "672255891",
-        perfil: "autor",
+        perfil: "leitor",
         senha: "22PTM3RDA"
     },
     {
         nome: "Lula",
         id: "131313131",
-        perfil: "autor",
+        perfil: "leitor",
         senha: "P1CANHAG02T02A"
     }
 ]
@@ -37,12 +37,21 @@ let noticias = [
         nome: "Chupacu avistado em plena luz do dia em Amapá",
         cidade: "Amapá",
         autor: "João Augusto",
-        comentario: ["TOMA NO CU JOAO, SEU MENTIROSO DO CARAIO, NÃO TEM PORRA NENUMA DE CHUPACU AQUI NAO, SEU FUDIDO DE MERDA",]
-        
+        comentarios: ["TOMA NO CU JOAO, SEU MENTIROSO DO CARAIO, NÃO TEM PORRA NENUMA DE CHUPACU AQUI NAO, SEU FUDIDO DE MERDA",],
+        status: "rascunho"
+    },
+
+    {
+        id: 2,
+        nome: "Streamer famoso 'Rato' come pão com nescau na chapa de uma lanchonete e é encontrado morto e branco duas horas após sua live",
+        cidade: "Xique-xique",
+        autor: "Jorge Lucas",
+        comentarios: [],
+        status: "publicado"
     }
 ]
 
-let perfilAtual;
+let perfilAtual = "autor"
 
 app.get('/', (req, res) => {
   res.send('Bem-vindo ao PORTAL ZACARIAS!!!');
@@ -67,14 +76,19 @@ perfilAtual = usuario.perfil
 })
 
 app.get('/noticias', (req, res) => {
-    res.json(noticias);
+    const noticiasPub = noticias.filter(noticias => noticias.status == "publicado")
+    res.json(noticiasPub)
 })
 
 app.post('/noticias/criacao', (req, res) => {
+    if (perfilAtual != "autor"){
+        return res.status(401).json({ erro: 'Você não tem permissão para criar uma notícia.'})
+    }
+
     const nome = req.body.nome;
     const cidade = req.body.cidade;
     const autor = req.body.autor;
-    // const comentario = req.body.comentario;
+    const status = req.body.status;
 
     if(!nome || typeof nome !== 'string'){
         return res.status(400).json({ erro: 'O nome é obrigatorio e tem que ser uma string' });
@@ -88,15 +102,16 @@ app.post('/noticias/criacao', (req, res) => {
         return res.status(400).json({ erro: 'O autor é obrigatorio e tem que ser uma string' });
     }
 
-    // if(!comentario || typeof comentario !== 'string'){
-    //     return res.status(400).json({ erro: 'O comentario é obrigatorio e tem que ser uma string' });
-    // }
+    if(!status || typeof status !== 'string'){
+        return res.status(400).json({ erro: 'O status é obrigatorio e tem que ser uma string' });
+    }
 
     const novaNoticia = {
+        id: (noticias.length + 1),
         nome: nome,
         cidade: cidade,
         autor: autor,
-        // comentario: [comentario]
+        status: status
     }
 
     noticias.push(novaNoticia);
@@ -119,6 +134,45 @@ app.post('/comentario/postar', (req, res) => {
     noticias[Number(id) - 1].comentario.push(comentario);
     res.status(201).json({comentario: comentario});
 
+})
+
+app.get('/noticias/:id', (req, res) => {
+    const {id} = req.params
+    const notProcura = noticias.find(u => u.id === parseInt(id));
+    
+    if (!noticias) {
+        return res.status(404).json({erro: "Nenhuma noticia com esse id identificada."})
+    }
+    res.json(notProcura)
+})
+
+app.post('comentario/deletar', (req, res) => {
+    
+})
+
+app.post('noticia/editar/:id', (req, res) => {
+    const {id} = req.params
+    const {nome, cidade, status} = req.body
+
+    if(!nome || typeof nome !== 'string'){
+        return res.status(400).json({ erro: 'O nome é obrigatorio e tem que ser uma string' });
+    }
+
+    if(!cidade || typeof cidade !== 'string'){
+        return res.status(400).json({ erro: 'O cidade é obrigatorio e tem que ser uma string' });
+    }
+
+    if(!status || typeof status !== 'string'){
+        return res.status(400).json({ erro: 'O status é obrigatorio e tem que ser uma string' });
+    }
+
+    const edicaoNot = {
+        nome: nome,
+        cidade: cidade,
+        status: status
+    }
+
+    noticias[id].splice(id, 1, edicaoNot)
 })
 
 app.listen(PORT, () =>{
