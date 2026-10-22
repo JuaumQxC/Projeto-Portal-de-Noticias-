@@ -188,7 +188,7 @@ app.post('/noticia/editar/:id', (req, res) => {
     const {nome, cidade, status} = req.body
     const autorNoticia= noticias.filter(noticias => noticias.autor == perfilNome)
 
-    if (perfilAtual != "autor" && autorNoticia == []){
+    if (perfilAtual != "autor" || autorNoticia == []){
         res.status(404).json("Erro, você não possui acesso para alterar esta noticia")
     }
 
