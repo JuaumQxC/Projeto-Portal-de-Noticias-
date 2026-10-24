@@ -57,9 +57,9 @@ let noticias = [
     }
 ]
 
-let perfilAtual = "moderador";
+let perfilAtual;
 let usuario;
-let perfilNome = "Jorge Lucas";
+let perfilNome;
 
 app.get('/', (req, res) => {
   res.send('Bem-vindo ao PORTAL ZACARIAS!!!');
@@ -115,11 +115,15 @@ app.post('/noticias/criacao', (req, res) => {
         return res.status(400).json({ erro: 'O status é obrigatorio e tem que ser uma string' });
     }
 
+    if (nome.length > 500){
+        return res.status(403).json({erro: 'O nome da noticia não pode ter mais que 500 caracteres.'})
+    }
     const novaNoticia = {
         id: (noticias.length + 1),
         nome: nome,
         cidade: cidade,
         autor: autor,
+        comentarios: [],
         status: status
     }
 
@@ -138,6 +142,10 @@ app.post('/comentario/postar/:id', (req, res) => {
 
     if(!comentario || typeof comentario !== 'string'){
         return res.status(400).json({ erro: 'O comentario é obrigatorio e tem que ser uma string' });
+    }
+
+    if (comentario.length > 500){
+        return res.status(403).json({erro: 'O comentario não pode ter mais que 500 caracteres.'})
     }
 
     noticias[Number(id) - 1].comentarios.push(comentario);
