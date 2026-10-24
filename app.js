@@ -57,7 +57,7 @@ let noticias = [
     }
 ]
 
-let perfilAtual = "autor";
+let perfilAtual = "moderador";
 let usuario;
 let perfilNome = "Jorge Lucas";
 
@@ -152,10 +152,14 @@ app.get('/noticias/:id', (req, res) => {
     if (!noticias) {
         return res.status(404).json({erro: "Nenhuma noticia com esse id identificada."})
     }
+    else if (notProcura.status != "publicado"){
+        return res.status(401).json({erro: 'Essa noticia não pode ser acessada neste momento.'}) 
+    }
+
     res.json(notProcura)
 })
 
-app.post('/comentario/deletar', (req, res) => {
+app.delete('/comentario/deletar', (req, res) => {
     if(perfilAtual != "moderador"){
         return res.status(401).json({ erro: 'Você não tem permissão para deletar um comentário.'})
     }
