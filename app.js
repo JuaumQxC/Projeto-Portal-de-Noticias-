@@ -53,7 +53,7 @@ let noticias = [
         cidade: "Xique-xique",
         autor: "Jorge Lucas",
         comentarios: [],
-        status: "rascunho"
+        status: "publicado"
     }
 ]
 
@@ -165,6 +165,26 @@ app.get('/noticias/:id', (req, res) => {
     }
 
     res.json(notProcura)
+})
+
+app.delete('/noticia/deletar/:id', (req, res) => {
+    const {id} = req.params
+    perfilVerif = noticias.find(n => n.autor == perfilNome && n.id == parseInt(id))
+
+    if (id > noticias.length || id < 1){
+        return res.status(404).json({erro: 'nenhuma noticia encontrada.'})
+    }
+
+    // if(perfilAtual != "moderador"){
+    //     return res.status(401).json({erro: 'Você não tem permissão para deletar esta notícia.'})
+    // }
+
+    if(perfilAtual != "autor" && perfilVerif == undefined){
+        return res.status(401).json({erro: 'Você não tem permissão para deletar esta notícia.'})
+    }
+
+    noticias.splice(parseInt(id - 1), 1)    
+    res.status(200).json({mensagem: 'Noticia deletada.'})
 })
 
 app.delete('/comentario/deletar', (req, res) => {
