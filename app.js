@@ -14,25 +14,29 @@ let usuarios = [
         nome: "João Augusto",
         id: "123456789",
         perfil: "autor",
-        senha: "wo2342"
+        senha: "wo2342",
+        privado: false
     },
     {
         nome: "Flávio Bolsonaro",
         id: "672255891",
         perfil: "leitor",
-        senha: "22PTM3RDA"
+        senha: "22PTM3RDA",
+        privado: false
     },
     {
         nome: "Lula",
         id: "131313131",
         perfil: "moderador",
-        senha: "P1CANHAG02T02A"
+        senha: "P1CANHAG02T02A",
+        privado: false
     },
     {
         nome: "Jorge Lucas",
         id: "229979771",
         perfil: "autor",
-        senha: "041012"
+        senha: "041012",
+        privado: true
     }
 ]
 
@@ -133,7 +137,11 @@ app.post('/noticias/criacao', (req, res) => {
 })
 
 app.get('/usuario', (req, res) => {
-    res.json(usuarios);
+    if (perfilAtual == "moderador"){
+        res.json(usuarios);
+    }else{
+        res.status(401).json({ erro: 'Você não permissão para ver a lista de usuários.'})
+    }
 })
 
 app.post('/comentario/postar/:id', (req, res) => {
