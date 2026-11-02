@@ -88,10 +88,11 @@ perfilAtual = usuario.perfil
 perfilNome = usuario.nome
 })
 
-app.get('/noticias', (req, res) => {
-    const noticiasPub = noticias.filter(noticias => noticias.status == "publicado")
-    res.json(noticiasPub)
-})
+// app.get('/noticias', (req, res) => {
+//     const noticiasPub = noticias.filter(noticias => noticias.status == "publicado")
+    
+//     res.json(noticiasPub)
+// })
 
 app.post('/noticias/criacao', (req, res) => {
     if (perfilAtual != "autor"){
@@ -100,7 +101,6 @@ app.post('/noticias/criacao', (req, res) => {
 
     const nome = req.body.nome;
     const cidade = req.body.cidade;
-    const autor = req.body.autor;
     const status = req.body.status;
 
     if(!nome || typeof nome !== 'string'){
@@ -109,10 +109,6 @@ app.post('/noticias/criacao', (req, res) => {
 
     if(!cidade || typeof cidade !== 'string'){
         return res.status(400).json({ erro: 'A cidade é obrigatorio e tem que ser uma string' });
-    }
-
-    if(!autor || typeof autor !== 'string'){
-        return res.status(400).json({ erro: 'O autor é obrigatorio e tem que ser uma string' });
     }
 
     if(!status || typeof status !== 'string'){
@@ -126,7 +122,7 @@ app.post('/noticias/criacao', (req, res) => {
         id: (noticias.length + 1),
         nome: nome,
         cidade: cidade,
-        autor: autor,
+        autor: perfilNome,
         comentarios: [],
         status: status
     }
@@ -164,12 +160,19 @@ app.post('/comentario/postar/:id', (req, res) => {
 app.get('/noticias/:id', (req, res) => {
     const {id} = req.params
     const notProcura = noticias.find(u => u.id === parseInt(id));
+    const notAutor = usuarios.find(u => notProcura.autor == u.nome);
     
     if (!noticias) {
         return res.status(404).json({erro: "Nenhuma noticia com esse id identificada."})
     }
-    else if (notProcura.status != "publicado"){
+
+    if (notProcura.status != "publicado"){
         return res.status(401).json({erro: 'Essa noticia não pode ser acessada neste momento.'}) 
+    }
+
+    if (notAutor.privado == true){
+        res.json(`id: ${notProcura.id}, nome: ${notProcura.nome}, cidade: ${notProcura.cidade}, autor: privado, comentários: ${notProcura.comentarios},status: ${notProcura.status}`
+        )
     }
 
     res.json(notProcura)
