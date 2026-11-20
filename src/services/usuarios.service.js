@@ -22,7 +22,7 @@ export async function listar() {
   return documentos.map(paraFormatoDaApi);
 }
 
-export async function criar({ titulo }) {
+export async function criar({ id, nome }) {
   if (typeof titulo !== 'string' || titulo.trim().length < 3) {
     throw new ErroDeValidacao('O título deve ter ao menos 3 caracteres.');
   }

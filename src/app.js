@@ -1,8 +1,21 @@
-const express = require('express');
+import express from 'express'
+import noticiasRoutes from './routes/noticias.routes'
+import usuariosRoutes from './routes/usuarios.routes'
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+app.use('/noticias', noticiasRoutes)
+app.use('/usuarios', usuariosRoutes)
+
+export default app;
+
+
+app.get('/', (req, res) => {
+  res.send('Bem-vindo ao PORTAL ZACARIAS!!!');
+});
+
 
 app.use((req, res, next) => {
   console.log(req.method, req.url, req.headers['content-type'], req.body, perfilAtual, perfilNome);
@@ -62,12 +75,8 @@ let noticias = [
 ]
 
 let perfilAtual;
-let usuario;
 let perfilNome;
 
-app.get('/', (req, res) => {
-  res.send('Bem-vindo ao PORTAL ZACARIAS!!!');
-});
 
 
 app.post('/login', (req, res) => {
