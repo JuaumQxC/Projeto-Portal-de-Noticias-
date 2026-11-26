@@ -67,3 +67,18 @@ export async function editar(req, res) {
     res.status(500).json({ error: 'Erro interno ao editar esta noticia.' });
   }
 }
+
+export async function postarComentario(req, res){
+  const {id} = req.params
+  const comentario = req.body
+
+  try {
+    res.json(await service.comentario(id, comentario))
+  } catch (error) {
+    if (error instanceof ErroDeValidacao) {
+      return res.status(400).json({ error: error.message });
+    }
+    console.error(error);
+    res.status(500).json({ error: 'Erro interno ao comentar nesta noticia.' });
+  }
+}

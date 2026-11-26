@@ -47,3 +47,12 @@ export async function remover(id) {
   const resultado = await colecao().deleteOne({ _id: new ObjectId(id) });
   return resultado.deletedCount > 0;
 }
+
+export async function postar(id, comentario) {
+  if (!ObjectId.isValid(id)) {
+    return false;
+  }
+  // mongosh: db.noticias.deleteOne({ _id: ObjectId("65f1c2a9e4b0a1b2c3d4e5f6") })
+  const resultado = await colecao().updateOne({ _id: new ObjectId(id) }, { $push: {comentarios: comentario} });
+  return resultado.matchedCount > 0;
+}

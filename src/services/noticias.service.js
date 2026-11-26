@@ -102,6 +102,17 @@ export async function editar(id, nome, cidade, status){
   return 'noticia editada com sucesso'
 }
 
-export async function comentario(){
+export async function comentario(id, comentario){
 
+  if (typeof comentario !== 'object' || comentario.comentario.trim() < 1) {
+    throw new ErroDeValidacao('você não pode fazer um comentário vazio.');
+  }
+  let novoComentario = await model.postar(id, comentario.comentario.trim())
+
+  if (!novoComentario){
+    throw new ErroDeValidacao("noticia não encontrada");
+  }
+
+  return 'comentário feito!'
 }
+
