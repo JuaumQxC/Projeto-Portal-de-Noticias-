@@ -53,3 +53,17 @@ export async function deletar (req, res){
     res.status(500).json({ error: 'Erro interno ao deletar esta noticia.' });
   }
 }
+
+export async function editar(req, res) {
+  const {id} = req.params
+  const {nome, cidade, status} = req.body
+  try {
+    res.json(await service.editar(id, nome, cidade, status))
+  } catch (error) {
+    if (error instanceof ErroDeValidacao) {
+      return res.status(400).json({ error: error.message });
+    }
+    console.error(error);
+    res.status(500).json({ error: 'Erro interno ao editar esta noticia.' });
+  }
+}

@@ -43,9 +43,9 @@ export async function criar({nome, cidade, status }) {
   if (sessaoLogin.perfilNome == null || sessaoLogin.perfilAtual != "autor") {
     throw new ErroDeValidacao('Você não está logado e/ou não possui permissão para criar noticias.');
   }
-  const novaTarefa = { nome: nome.trim(), cidade: cidade.trim(), autor: sessaoLogin.perfilNome, comentarios: [], status: status.trim()};
-  const insertedId = await model.inserir(novaTarefa);
-  return noticiaAtributos({ _id: insertedId, ...novaTarefa });
+  const novaNoticia = { nome: nome.trim(), cidade: cidade.trim(), autor: sessaoLogin.perfilNome, comentarios: [], status: status.trim()};
+  const insertedId = await model.inserir(novaNoticia);
+  return noticiaAtributos({ _id: insertedId, ...novaNoticia });
 }
 
 export async function procurarId(id) {
@@ -66,4 +66,38 @@ export async function deletar(id){
   }
 
   return 'noticia deletada.'
+}
+
+export async function editar(id, nome, cidade, status){
+  let notProcura = await model.buscarPorId(id)
+
+  if (notProcura == undefined) {
+    throw new ErroDeValidacao("Não foi possível localizar esta noticia.");
+    
+  }
+
+  if (typeof nome !== 'string' || nome.trim().length < 3) {
+    throw new ErroDeValidacao('O nome da noticia deve ter ao menos 3 caracteres.');
+  }
+
+  if (typeof cidade !== 'string' || cidade.trim().length < 3) {
+    throw new ErroDeValidacao('O  deve ter ao menos 3 caracteres.');
+  }
+
+  if (typeof status !== 'string' || status != "publicado" && status != "rascunho") {
+    throw new ErroDeValidacao('Defina o status da sua noticia.');
+  }
+
+  if (sessaoLogin.perfilAtual != "autor" && notProcura.autor != sessaoLogin.perfilNome) {
+    throw new ErroDeValidacao('Você não possui permissão para editar esta noticia.');
+  }
+  const novaNoticia = { nome: nome.trim(), cidade: cidade.trim(), autor: sessaoLogin.perfilNome, comentarios: [], status: status.trim()};
+
+  let edicaoNot = await model.atualizar(id, novaNoticia)
+
+  if (!edicaoNot){
+    throw new ErroDeValidacao('noticia não encontrada.')
+  }
+
+  return 'noticia editada com sucesso'
 }
