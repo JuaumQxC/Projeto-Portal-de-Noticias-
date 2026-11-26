@@ -5,10 +5,10 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:up": "docker start mongo-tarefas || docker run -d --name mongo-tarefas -p 127.0.0.1:27017:27017 -v mongo-tarefas-data:/data/db mongo:8",
-    "db:down": "docker stop mongo-tarefas",
-    "db:logs": "docker logs -f mongo-tarefas",
-    "db:reset": "docker rm -f mongo-tarefas; docker volume rm mongo-tarefas-data",
+    "db:up": "docker start Projeto-Portal-de-Noticias- || docker run -d --name Projeto-Portal-de-Noticias- -p 127.0.0.1:27017:27017 -v Projeto-Portal-de-Noticias--data:/data/db mongo:8",
+    "db:down": "docker stop Projeto-Portal-de-Noticias-",
+    "db:logs": "docker logs -f Projeto-Portal-de-Noticias-",
+    "db:reset": "docker rm -f Projeto-Portal-de-Noticias-; docker volume rm Projeto-Portal-de-Noticias--data",
     "predev": "npm run db:up",
     "dev": "node --watch src/server.js",
     "start": "node src/server.js"
@@ -18,6 +18,7 @@
   "type": "module",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^18.0.10",
     "express": "^5.2.1",
     "mongodb": "^7.8.0"
   }

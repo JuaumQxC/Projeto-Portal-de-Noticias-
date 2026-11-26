@@ -1,6 +1,7 @@
 // src/services/usuarios.service.js
 import * as model from '../models/usuarios.model.js';
-
+// import * as usuarioInfo from '../middleware/MiddlewareLogin.js'
+// usuarioInfo.perfilAtual
 export class ErroDeValidacao extends Error {
   constructor(mensagem) {
     super(mensagem);
@@ -9,24 +10,35 @@ export class ErroDeValidacao extends Error {
 }
 
 // O MongoDB guarda o identificador em `_id` (ObjectId). A API expõe `id` como texto, e é isso que este formato devolve.
-function paraFormatoDaApi(documento) {
+function usuarioAtributos(usuario) {
   return {
-    id: documento._id.toHexString(),
-    titulo: documento.titulo,
-    concluida: documento.concluida,
+    id: usuario._id.toHexString(),
+    nome: usuario.nome,
+    perfil: usuario.perfil,
+    senha: usuario.senha,
+    privado: usuario.privado
   };
 }
 
 export async function listar() {
-  const documentos = await model.buscarTodas();
-  return documentos.map(paraFormatoDaApi);
+  const listaUsuario = await model.buscarTodas();
+  return listaUsuario.map(usuarioAtributos);
 }
 
-export async function criar({ id, nome }) {
-  if (typeof titulo !== 'string' || titulo.trim().length < 3) {
-    throw new ErroDeValidacao('O título deve ter ao menos 3 caracteres.');
+export async function criar({ id, nome, perfil, senha, privado }) {
+  if (typeof nome !== 'string' || nome.trim().length < 3) {
+    throw new ErroDeValidacao('O nome de usuário deve ter ao menos 3 caracteres.');
   }
-  const novaTarefa = { titulo: titulo.trim(), concluida: false };
-  const insertedId = await model.inserir(novaTarefa);
-  return paraFormatoDaApi({ _id: insertedId, ...novaTarefa });
+  if (typeof perfil !== 'string' || perfil.trim().length < 5) {
+    throw new ErroDeValidacao('você não inseriu um perfil válido.');
+  }
+  if (typeof senha !== 'string' || senha.trim().length < 6) {
+    throw new ErroDeValidacao('A senha deve ter ao menos 6 caracteres.');
+  }
+  if (typeof privado !== 'boolean') {
+    throw new ErroDeValidacao('você não definiu a privacidade do seu perfil.');
+  }
+  const novoUsuario = { nome: nome.trim(), perfil: perfil.trim(), senha: senha.trim(), privado: privado };
+  const insertedId = await model.inserir(novoUsuario);
+  return usuarioAtributos({ _id: insertedId, ...novoUsuario });
 }

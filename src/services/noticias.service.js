@@ -12,7 +12,7 @@ export class ErroDeValidacao extends Error {
 }
 
 // O MongoDB guarda o identificador em `_id` (ObjectId). A API expõe `id` como texto, e é isso que este formato devolve.
-function paraFormatoDaApi(noticia) {
+function noticiaAtributos(noticia) {
   return {
     _id: noticia._id.toHexString(),
     nome: noticia.nome,
@@ -25,7 +25,7 @@ function paraFormatoDaApi(noticia) {
 
 export async function listar() {
   const documentos = await model.buscarTodas();
-  return documentos.map(paraFormatoDaApi);
+  return documentos.map(noticiaAtributos);
 }
 
 export async function criar({nome, cidade, autor, comentarios, status  }) {
@@ -47,5 +47,5 @@ export async function criar({nome, cidade, autor, comentarios, status  }) {
   }
   const novaTarefa = { nome: nome.trim(), cidade: cidade.trim(), autor: perfilNome, comentarios: [], status: status.trim()};
   const insertedId = await model.inserir(novaTarefa);
-  return paraFormatoDaApi({ _id: insertedId, ...novaTarefa });
+  return noticiaAtributos({ _id: insertedId, ...novaTarefa });
 }

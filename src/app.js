@@ -1,10 +1,15 @@
 import express from 'express'
-import noticiasRoutes from './routes/noticias.routes'
-import usuariosRoutes from './routes/usuarios.routes'
+import noticiasRoutes from './routes/noticias.routes.js'
+import usuariosRoutes from './routes/usuarios.routes.js'
+import * as usuarioInfo from './middleware/MiddlewareLogin.js'
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+app.get('/', (req, res)=>{
+    res.json({message: "Bem vindo ao portal"})
+})
 
 app.use('/noticias', noticiasRoutes)
 app.use('/usuarios', usuariosRoutes)
@@ -12,269 +17,276 @@ app.use('/usuarios', usuariosRoutes)
 export default app;
 
 
-app.get('/', (req, res) => {
-  res.send('Bem-vindo ao PORTAL ZACARIAS!!!');
-});
+// app.get('/', (req, res) => {
+//   res.send('Bem-vindo ao PORTAL ZACARIAS!!!');
+// });
 
 
 app.use((req, res, next) => {
-  console.log(req.method, req.url, req.headers['content-type'], req.body, perfilAtual, perfilNome);
+  console.log(req.method, req.url, req.body, usuarioInfo.perfilNome, usuarioInfo.perfilNome);
   next();
 });
 
-let usuarios = [
-    {
-        nome: "João Augusto",
-        id: "123456789",
-        perfil: "autor",
-        senha: "wo2342",
-        privado: false
-    },
-    {
-        nome: "Flávio Bolsonaro",
-        id: "672255891",
-        perfil: "leitor",
-        senha: "22PTM3RDA",
-        privado: false
-    },
-    {
-        nome: "Lula",
-        id: "131313131",
-        perfil: "moderador",
-        senha: "P1CANHAG02T02A",
-        privado: false
-    },
-    {
-        nome: "Jorge Lucas",
-        id: "229979771",
-        perfil: "autor",
-        senha: "041012",
-        privado: true
-    }
-]
+// let usuarios = [
+//     {
+//         nome: "João Augusto",
+//         id: "123456789",
+//         perfil: "autor",
+//         senha: "wo2342",
+//         privado: false
+//     },
+//     {
+//         nome: "Flávio Bolsonaro",
+//         id: "672255891",
+//         perfil: "leitor",
+//         senha: "22PTM3RDA",
+//         privado: false
+//     },
+//     {
+//         nome: "Lula",
+//         id: "131313131",
+//         perfil: "moderador",
+//         senha: "P1CANHAG02T02A",
+//         privado: false
+//     },
+//     {
+//         nome: "Jorge Lucas",
+//         id: "229979771",
+//         perfil: "autor",
+//         senha: "041012",
+//         privado: true
+//     }
+// ]
 
 
-let noticias = [ 
-    {
-        id: 1,
-        nome: "Chupacabra avistado em plena luz do dia em Amapá",
-        cidade: "Amapá",
-        autor: "João Augusto",
-        comentarios: ["TOMA NO CU JOAO, SEU MENTIROSO DO CARAIO, NÃO TEM PORRA NENUMA DE CHUPACABRA AQUI NAO, SEU FUDIDO DE MERDA",],
-        status: "publicado"
-    },
+// let noticias = [ 
+//     {
+//         id: 1,
+//         nome: "Chupacabra avistado em plena luz do dia em Amapá",
+//         cidade: "Amapá",
+//         autor: "João Augusto",
+//         comentarios: ["TOMA NO CU JOAO, SEU MENTIROSO DO CARAIO, NÃO TEM PORRA NENUMA DE CHUPACABRA AQUI NAO, SEU FUDIDO DE MERDA",],
+//         status: "publicado"
+//     },
 
-    {
-        id: 2,
-        nome: "Streamer famoso 'Rato' come pão com nescau na chapa de uma lanchonete e é encontrado morto e branco duas horas após sua live",
-        cidade: "Xique-xique",
-        autor: "Jorge Lucas",
-        comentarios: [],
-        status: "publicado"
-    }
-]
+//     {
+//         id: 2,
+//         nome: "Streamer famoso 'Rato' come pão com nescau na chapa de uma lanchonete e é encontrado morto e branco duas horas após sua live",
+//         cidade: "Xique-xique",
+//         autor: "Jorge Lucas",
+//         comentarios: [],
+//         status: "publicado"
+//     }
+// ]
 
-let perfilAtual;
-let perfilNome;
+// let perfilAtual;
+// let perfilNome;
 
 
+// rota já criada
 
-app.post('/login', (req, res) => {
-    const id = req.body.id;
-    const senha = req.body.senha
+// app.post('/login', (req, res) => {
+//     const id = req.body.id;
+//     const senha = req.body.senha
 
-    const encontrar = usuarios.filter((u) => u.id === id && u.senha === senha)
+//     const encontrar = usuarios.filter((u) => u.id === id && u.senha === senha)
 
-if(encontrar.length === 0){
-    return res.status(404).json({ erro: 'Usuario não encontrado' });
-}
+// if(encontrar.length === 0){
+//     return res.status(404).json({ erro: 'Usuario não encontrado' });
+// }
 
-const usuario = encontrar[0];
+// const usuario = encontrar[0];
 
-res.status(200).json({nome: usuario.nome, perfil: usuario.perfil});
+// res.status(200).json({nome: usuario.nome, perfil: usuario.perfil});
 
-perfilAtual = usuario.perfil
-perfilNome = usuario.nome
-})
-
-// app.get('/noticias', (req, res) => {
-//     const noticiasPub = noticias.filter(noticias => noticias.status == "publicado")
-    
-//     res.json(noticiasPub)
+// perfilAtual = usuario.perfil
+// perfilNome = usuario.nome
 // })
 
-app.post('/noticias/criacao', (req, res) => {
-    if (perfilAtual != "autor"){
-        return res.status(401).json({ erro: 'Você não tem permissão para criar uma notícia.'})
-    }
 
-    const nome = req.body.nome;
-    const cidade = req.body.cidade;
-    const status = req.body.status;
 
-    if(!nome || typeof nome !== 'string'){
-        return res.status(400).json({ erro: 'O nome é obrigatorio e tem que ser uma string' });
-    }
-
-    if(!cidade || typeof cidade !== 'string'){
-        return res.status(400).json({ erro: 'A cidade é obrigatorio e tem que ser uma string' });
-    }
-
-    if(!status || typeof status !== 'string'){
-        return res.status(400).json({ erro: 'O status é obrigatorio e tem que ser uma string' });
-    }
-
-    if (nome.length > 500){
-        return res.status(403).json({erro: 'O nome da noticia não pode ter mais que 500 caracteres.'})
-    }
-    const novaNoticia = {
-        id: (noticias.length + 1),
-        nome: nome,
-        cidade: cidade,
-        autor: perfilNome,
-        comentarios: [],
-        status: status
-    }
-
-    noticias.push(novaNoticia);
-
-    res.status(201).json(novaNoticia);
-})
-
-app.get('/usuario', (req, res) => {
-    if (perfilAtual == "moderador"){
-        res.json(usuarios);
-    }else{
-        res.status(401).json({ erro: 'Você não permissão para ver a lista de usuários.'})
-    }
-})
-
-app.post('/comentario/postar/:id', (req, res) => {
-    const {id} = req.params
-    const comentario = req.body.comentario;
-
-    if(!comentario || typeof comentario !== 'string'){
-        return res.status(400).json({ erro: 'O comentario é obrigatorio e tem que ser uma string' });
-    }
-
-    if (comentario.length > 500){
-        return res.status(403).json({erro: 'O comentario não pode ter mais que 500 caracteres.'})
-    }
-
-    noticias[Number(id) - 1].comentarios.push(comentario);
-    res.status(201).json({comentario: comentario});
-
-})
-
-app.get('/noticias/:id', (req, res) => {
-    const {id} = req.params
-    const notProcura = noticias.find(u => u.id === parseInt(id));
-    const notAutor = usuarios.find(u => notProcura.autor == u.nome);
+// // app.get('/noticias', (req, res) => {
+// //     const noticiasPub = noticias.filter(noticias => noticias.status == "publicado")
     
-    if (!noticias) {
-        return res.status(404).json({erro: "Nenhuma noticia com esse id identificada."})
-    }
+// //     res.json(noticiasPub)
+// // })
 
-    if (notProcura.status != "publicado"){
-        return res.status(401).json({erro: 'Essa noticia não pode ser acessada neste momento.'}) 
-    }
+// app.post('/noticias/criacao', (req, res) => {
+//     if (perfilAtual != "autor"){
+//         return res.status(401).json({ erro: 'Você não tem permissão para criar uma notícia.'})
+//     }
 
-    if (notAutor.privado == true){
-        res.json(`id: ${notProcura.id}, nome: ${notProcura.nome}, cidade: ${notProcura.cidade}, autor: privado, comentários: ${notProcura.comentarios},status: ${notProcura.status}`
-        )
-    }
+//     const nome = req.body.nome;
+//     const cidade = req.body.cidade;
+//     const status = req.body.status;
 
-    res.json(notProcura)
-})
+//     if(!nome || typeof nome !== 'string'){
+//         return res.status(400).json({ erro: 'O nome é obrigatorio e tem que ser uma string' });
+//     }
 
-app.delete('/noticia/deletar/:id', (req, res) => {
-    const {id} = req.params
-    perfilVerif = noticias.find(n => n.autor == perfilNome && n.id == parseInt(id))
+//     if(!cidade || typeof cidade !== 'string'){
+//         return res.status(400).json({ erro: 'A cidade é obrigatorio e tem que ser uma string' });
+//     }
 
-    if (id > noticias.length || id < 1){
-        return res.status(404).json({erro: 'nenhuma noticia encontrada.'})
-    }
+//     if(!status || typeof status !== 'string'){
+//         return res.status(400).json({ erro: 'O status é obrigatorio e tem que ser uma string' });
+//     }
 
-    // if(perfilAtual != "moderador"){
-    //     return res.status(401).json({erro: 'Você não tem permissão para deletar esta notícia.'})
-    // }
+//     if (nome.length > 500){
+//         return res.status(403).json({erro: 'O nome da noticia não pode ter mais que 500 caracteres.'})
+//     }
+//     const novaNoticia = {
+//         id: (noticias.length + 1),
+//         nome: nome,
+//         cidade: cidade,
+//         autor: perfilNome,
+//         comentarios: [],
+//         status: status
+//     }
 
-    if(perfilAtual != "autor" && perfilVerif == undefined){
-        return res.status(401).json({erro: 'Você não tem permissão para deletar esta notícia.'})
-    }
+//     noticias.push(novaNoticia);
 
-    noticias.splice(parseInt(id - 1), 1)    
-    res.status(200).json({mensagem: 'Noticia deletada.'})
-})
+//     res.status(201).json(novaNoticia);
+// })
 
-app.delete('/comentario/deletar', (req, res) => {
-    if(perfilAtual != "moderador"){
-        return res.status(401).json({ erro: 'Você não tem permissão para deletar um comentário.'})
-    }
+
+// rota ja criada
+
+// app.get('/usuario', (req, res) => {
+//     if (perfilAtual == "moderador"){
+//         res.json(usuarios);
+//     }else{
+//         res.status(401).json({ erro: 'Você não permissão para ver a lista de usuários.'})
+//     }
+// })
+
+
+// app.post('/comentario/postar/:id', (req, res) => {
+//     const {id} = req.params
+//     const comentario = req.body.comentario;
+
+//     if(!comentario || typeof comentario !== 'string'){
+//         return res.status(400).json({ erro: 'O comentario é obrigatorio e tem que ser uma string' });
+//     }
+
+//     if (comentario.length > 500){
+//         return res.status(403).json({erro: 'O comentario não pode ter mais que 500 caracteres.'})
+//     }
+
+//     noticias[Number(id) - 1].comentarios.push(comentario);
+//     res.status(201).json({comentario: comentario});
+
+// })
+
+// app.get('/noticias/:id', (req, res) => {
+//     const {id} = req.params
+//     const notProcura = noticias.find(u => u.id === parseInt(id));
+//     const notAutor = usuarios.find(u => notProcura.autor == u.nome);
     
-    const {id, comentario} = req.body
+//     if (!noticias) {
+//         return res.status(404).json({erro: "Nenhuma noticia com esse id identificada."})
+//     }
+
+//     if (notProcura.status != "publicado"){
+//         return res.status(401).json({erro: 'Essa noticia não pode ser acessada neste momento.'}) 
+//     }
+
+//     if (notAutor.privado == true){
+//         res.json(`id: ${notProcura.id}, nome: ${notProcura.nome}, cidade: ${notProcura.cidade}, autor: privado, comentários: ${notProcura.comentarios},status: ${notProcura.status}`
+//         )
+//     }
+
+//     res.json(notProcura)
+// })
+
+// app.delete('/noticia/deletar/:id', (req, res) => {
+//     const {id} = req.params
+//     perfilVerif = noticias.find(n => n.autor == perfilNome && n.id == parseInt(id))
+
+//     if (id > noticias.length || id < 1){
+//         return res.status(404).json({erro: 'nenhuma noticia encontrada.'})
+//     }
+
+//     // if(perfilAtual != "moderador"){
+//     //     return res.status(401).json({erro: 'Você não tem permissão para deletar esta notícia.'})
+//     // }
+
+//     if(perfilAtual != "autor" && perfilVerif == undefined){
+//         return res.status(401).json({erro: 'Você não tem permissão para deletar esta notícia.'})
+//     }
+
+//     noticias.splice(parseInt(id - 1), 1)    
+//     res.status(200).json({mensagem: 'Noticia deletada.'})
+// })
+
+// app.delete('/comentario/deletar', (req, res) => {
+//     if(perfilAtual != "moderador"){
+//         return res.status(401).json({ erro: 'Você não tem permissão para deletar um comentário.'})
+//     }
     
-    if(!id || typeof id !== 'number' || !comentario || typeof comentario !== 'string'){
-        return res.status(400).json({ erro: 'O id é obrigatorio e tem que ser um numero' });
-    }
-
-    const encontrar_id = noticias.filter((n) => n.id === id)
-
-    if(encontrar_id.length === 0){
-        return res.status(404).json({ erro: 'Noticia não encontrada' });
-    }
-
-    const noticia = encontrar_id[0];
-    const indice = noticia.comentarios.indexOf(comentario);
-
-    if(indice === -1){
-        return res.status(404).json({ erro: 'Comentario não encontrado' });
-    }
-
-    noticia.comentarios.splice(indice, 1);
-    res.status(200).json({mensagem: 'Comentario deletado com sucesso'})
-});
-
-app.post('/noticia/editar/:id', (req, res) => {
-    const {id} = req.params
-    const {nome, cidade, status} = req.body
-    const autorNoticia= noticias.filter(noticias => noticias.autor == perfilNome)
-
-    if (perfilAtual != "autor" || autorNoticia == []){
-        res.status(404).json("Erro, você não possui acesso para alterar esta noticia")
-    }
-
-    if(!nome || typeof nome !== 'string'){
-        return res.status(400).json({ erro: 'O nome é obrigatorio e tem que ser uma string' });
-    }
-
-    if(!cidade || typeof cidade !== 'string'){
-        return res.status(400).json({ erro: 'O cidade é obrigatorio e tem que ser uma string' });
-    }
-
-    if(!status || typeof status !== 'string'){
-        return res.status(400).json({ erro: 'O status é obrigatorio e tem que ser uma string' });
-    }
-
-    const edicaoNot = {
-        id: id,
-        nome: nome,
-        cidade: cidade,
-        status: status
-    }
-
-    noticias.splice(parseInt(id), 1, edicaoNot)
+//     const {id, comentario} = req.body
     
-    res.status(201).json({edicaoNot})
-})
+//     if(!id || typeof id !== 'number' || !comentario || typeof comentario !== 'string'){
+//         return res.status(400).json({ erro: 'O id é obrigatorio e tem que ser um numero' });
+//     }
 
-app.listen(PORT, () =>{
-    console.log(`Servidor rodando em http://localhost:${PORT}`
-    );
-});
+//     const encontrar_id = noticias.filter((n) => n.id === id)
 
-app.use((req, res) => {
-    res.status(404).json({
-        erro: 'Rota não encontrada'
-    });
-});
+//     if(encontrar_id.length === 0){
+//         return res.status(404).json({ erro: 'Noticia não encontrada' });
+//     }
+
+//     const noticia = encontrar_id[0];
+//     const indice = noticia.comentarios.indexOf(comentario);
+
+//     if(indice === -1){
+//         return res.status(404).json({ erro: 'Comentario não encontrado' });
+//     }
+
+//     noticia.comentarios.splice(indice, 1);
+//     res.status(200).json({mensagem: 'Comentario deletado com sucesso'})
+// });
+
+// app.post('/noticia/editar/:id', (req, res) => {
+//     const {id} = req.params
+//     const {nome, cidade, status} = req.body
+//     const autorNoticia= noticias.filter(noticias => noticias.autor == perfilNome)
+
+//     if (perfilAtual != "autor" || autorNoticia == []){
+//         res.status(404).json("Erro, você não possui acesso para alterar esta noticia")
+//     }
+
+//     if(!nome || typeof nome !== 'string'){
+//         return res.status(400).json({ erro: 'O nome é obrigatorio e tem que ser uma string' });
+//     }
+
+//     if(!cidade || typeof cidade !== 'string'){
+//         return res.status(400).json({ erro: 'O cidade é obrigatorio e tem que ser uma string' });
+//     }
+
+//     if(!status || typeof status !== 'string'){
+//         return res.status(400).json({ erro: 'O status é obrigatorio e tem que ser uma string' });
+//     }
+
+//     const edicaoNot = {
+//         id: id,
+//         nome: nome,
+//         cidade: cidade,
+//         status: status
+//     }
+
+//     noticias.splice(parseInt(id), 1, edicaoNot)
+    
+//     res.status(201).json({edicaoNot})
+// })
+
+// app.listen(PORT, () =>{
+//     console.log(`Servidor rodando em http://localhost:${PORT}`
+//     );
+// });
+
+// app.use((req, res) => {
+//     res.status(404).json({
+//         erro: 'Rota não encontrada'
+//     });
+// });

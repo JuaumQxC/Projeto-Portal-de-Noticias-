@@ -2,7 +2,7 @@
 import * as service from '../services/usuarios.service.js';
 import { ErroDeValidacao } from '../services/usuarios.service.js';
 
-export async function listar(req, res) {
+export async function listarUsuario(req, res) {
   try {
     res.json(await service.listar());
   } catch (error) {
@@ -11,7 +11,7 @@ export async function listar(req, res) {
   }
 }
 
-export async function criar(req, res) {
+export async function criarUsuario(req, res) {
   try {
     const usuarios = await service.criar(req.body ?? {});
     res.status(201).json(usuarios);
