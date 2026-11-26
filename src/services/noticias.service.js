@@ -15,7 +15,7 @@ function noticiaAtributos(noticia) {
     _id: noticia._id.toHexString(),
     nome: noticia.nome,
     cidade: noticia.cidade,
-    autor: sessaoLogin.perfilNome,
+    autor: noticia.autor,
     comentarios : noticia.comentarios,
     status: noticia.status,
   };
@@ -100,4 +100,8 @@ export async function editar(id, nome, cidade, status){
   }
 
   return 'noticia editada com sucesso'
+}
+
+export async function comentario(){
+
 }
