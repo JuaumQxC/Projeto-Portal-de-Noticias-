@@ -22,8 +22,8 @@ function noticiaAtributos(noticia) {
 }
 
 export async function listar() {
-  const documentos = await model.buscarTodas();
-  return documentos.map(noticiaAtributos);
+  const noticias = await model.buscarTodas();
+  return noticias.map(noticiaAtributos);
 }
 
 export async function criar({nome, cidade, status }) {
@@ -39,7 +39,22 @@ export async function criar({nome, cidade, status }) {
   if (typeof status !== 'string' || status != "publicado" && status != "rascunho") {
     throw new ErroDeValidacao('Defina o status da sua noticia.');
   }
+
+  if (sessaoLogin.perfilNome == null || sessaoLogin.perfilAtual != "autor") {
+    throw new ErroDeValidacao('Você não está logado e/ou não possui permissão para criar noticias.');
+  }
   const novaTarefa = { nome: nome.trim(), cidade: cidade.trim(), autor: sessaoLogin.perfilNome, comentarios: [], status: status.trim()};
   const insertedId = await model.inserir(novaTarefa);
   return noticiaAtributos({ _id: insertedId, ...novaTarefa });
 }
+
+export async function procurarId(id) {
+  let notProcura = await model.buscarPorId(id)
+
+  if (notProcura == undefined) {
+    throw new Error("Não foi possível localizar esta noticia.");
+    
+  }
+  return notProcura
+}
+

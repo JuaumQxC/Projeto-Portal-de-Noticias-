@@ -6,8 +6,8 @@ import * as login from '../controllers/login.controller.js'
 const router = Router();
 router.get('/listar', controller.listar);
 router.post('/criar', controller.criar);
-// router.get(':id', controller.ProcurarId)
-// router.post('/comentario/postar/:id', controller.PostarComentario)
+router.get('/buscar/:id', controller.buscarNoticia)
+// router.post('/comentario/postar/:id', controller.postarComentario)
 // router.delete('deletar/:id', controller.deletaNoticia)
 // router.delete('comentario/deletar', controller.deletaComentario)
 

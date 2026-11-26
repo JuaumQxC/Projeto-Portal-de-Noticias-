@@ -4,8 +4,6 @@ export let sessaoLogin = {
     perfilAtual: null,
     perfilNome: null
 }
-export let perfilAtual;
-export let perfilNome;
 
 // export async function loginAtual (req, res){
 //     const idusario = req.body.id
