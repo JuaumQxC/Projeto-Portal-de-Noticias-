@@ -52,9 +52,18 @@ export async function procurarId(id) {
   let notProcura = await model.buscarPorId(id)
 
   if (notProcura == undefined) {
-    throw new Error("Não foi possível localizar esta noticia.");
+    throw new ErroDeValidacao("Não foi possível localizar esta noticia.");
     
   }
   return notProcura
 }
 
+export async function deletar(id){
+  let deletaNot = model.remover(id)
+
+  if (!deletaNot){
+    throw new ErroDeValidacao('Não foi achado nenhuma noticia com esse id.')
+  }
+
+  return 'noticia deletada.'
+}

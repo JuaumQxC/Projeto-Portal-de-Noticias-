@@ -39,3 +39,17 @@ export async function buscarNoticia (req, res) {
   }
 
 }
+
+export async function deletar (req, res){
+  const {id} = req.params
+
+  try {
+    res.json(await service.deletar(id))
+  } catch (error) {
+    if (error instanceof ErroDeValidacao) {
+      return res.status(400).json({ error: error.message });
+    }
+    console.error(error);
+    res.status(500).json({ error: 'Erro interno ao deletar esta noticia.' });
+  }
+}

@@ -24,7 +24,7 @@ export let sessaoLogin = {
 // }
 
 export async function moderadorCheck(req, res, next) {
-    if (perfilAtual != 'moderador'){
+    if (sessaoLogin.perfilAtual != 'moderador'){
         return res.status(401).json('Você não possui permissão para ver a lista de usuários.')
     }
     next()
@@ -32,7 +32,7 @@ export async function moderadorCheck(req, res, next) {
 }
 
 export async function autorCheck(req, res, next) {
-    if (perfilAtual != 'autor'){
+    if (sessaoLogin.perfilAtual != 'autor'){
         return res.status(401).json('Você não possui permissão para alterar/ver esta noticia.')
     }
     next()
