@@ -1,4 +1,11 @@
-import { perfilAtual, perfilNome } from "../services/login.service.js"
+// import { perfilAtual, perfilNome } from "../services/login.service.js"
+
+export let sessaoLogin = {
+    perfilAtual: null,
+    perfilNome: null
+}
+export let perfilAtual;
+export let perfilNome;
 
 // export async function loginAtual (req, res){
 //     const idusario = req.body.id
@@ -31,5 +38,9 @@ export async function autorCheck(req, res, next) {
         return res.status(401).json('Você não possui permissão para alterar/ver esta noticia.')
     }
     next()
+
+}
+
+export async function autorPrivado(req, res, next){
 
 }

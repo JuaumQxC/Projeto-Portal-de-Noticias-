@@ -1,7 +1,5 @@
 import * as model from '../models/usuarios.model.js';
-
-export let perfilAtual;
-export let perfilNome;
+import { sessaoLogin } from '../middleware/MiddlewareLogin.js';
 
 export class ErroDeValidacao extends Error {
   constructor(mensagem) {
@@ -21,9 +19,9 @@ export async function login (id, senha){
          throw new ErroDeValidacao('senha inválida.');
     }
     
-    perfilAtual = usuario.perfil
-    perfilNome = usuario.nome
-    console.log(perfilAtual, perfilNome)
+    sessaoLogin.perfilAtual = usuario.perfil
+    sessaoLogin.perfilNome = usuario.nome
+    console.log(sessaoLogin)
 
     return true
 }

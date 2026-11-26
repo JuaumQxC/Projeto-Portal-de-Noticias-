@@ -1,8 +1,6 @@
 // src/services/noticias.service.js
 import * as model from '../models/noticias.model.js';
-
-let perfilAtual;
-let perfilNome;
+import { sessaoLogin } from '../middleware/MiddlewareLogin.js';
 
 export class ErroDeValidacao extends Error {
   constructor(mensagem) {
@@ -17,7 +15,7 @@ function noticiaAtributos(noticia) {
     _id: noticia._id.toHexString(),
     nome: noticia.nome,
     cidade: noticia.cidade,
-    autor: perfilNome,
+    autor: sessaoLogin.perfilNome,
     comentarios : noticia.comentarios,
     status: noticia.status,
   };
@@ -28,7 +26,7 @@ export async function listar() {
   return documentos.map(noticiaAtributos);
 }
 
-export async function criar({nome, cidade, autor, comentarios, status  }) {
+export async function criar({nome, cidade, status }) {
 
   if (typeof nome !== 'string' || nome.trim().length < 3) {
     throw new ErroDeValidacao('O nome da noticia deve ter ao menos 3 caracteres.');
@@ -37,15 +35,11 @@ export async function criar({nome, cidade, autor, comentarios, status  }) {
   if (typeof cidade !== 'string' || cidade.trim().length < 3) {
     throw new ErroDeValidacao('O  deve ter ao menos 3 caracteres.');
   }
-  
-  if (typeof autor !== 'string' || perfilNome == undefined) {
-    throw new ErroDeValidacao('Erro. Você não está logado.');
-  }
 
-  if (typeof status !== 'string' || status != "publicado" || status != "rascunho") {
-    throw new ErroDeValidacao('O título deve ter ao menos 3 caracteres.');
+  if (typeof status !== 'string' || status != "publicado" && status != "rascunho") {
+    throw new ErroDeValidacao('Defina o status da sua noticia.');
   }
-  const novaTarefa = { nome: nome.trim(), cidade: cidade.trim(), autor: perfilNome, comentarios: [], status: status.trim()};
+  const novaTarefa = { nome: nome.trim(), cidade: cidade.trim(), autor: sessaoLogin.perfilNome, comentarios: [], status: status.trim()};
   const insertedId = await model.inserir(novaTarefa);
   return noticiaAtributos({ _id: insertedId, ...novaTarefa });
 }
