@@ -72,7 +72,7 @@ export default app;
 //     {
 //         id: 2,
 //         nome: "Streamer famoso 'Rato' come pão com nescau na chapa de uma lanchonete e é encontrado morto e branco duas horas após sua live",
-//         cidade: "Xique-xique",
+//         cidade: "Xique-xique bahia",
 //         autor: "Jorge Lucas",
 //         comentarios: [],
 //         status: "publicado"

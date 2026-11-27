@@ -43,6 +43,12 @@ export async function criar({nome, cidade, status }) {
   if (sessaoLogin.perfilNome == null || sessaoLogin.perfilAtual != "autor") {
     throw new ErroDeValidacao('Você não está logado e/ou não possui permissão para criar noticias.');
   }
+
+  if (sessaoLogin.privado == true){
+  const novaNoticia = { nome: nome.trim(), cidade: cidade.trim(), autor: '[privado]', comentarios: [], status: status.trim()};
+  const insertedId = await model.inserir(novaNoticia);
+  return noticiaAtributos({ _id: insertedId, ...novaNoticia });
+  }
   const novaNoticia = { nome: nome.trim(), cidade: cidade.trim(), autor: sessaoLogin.perfilNome, comentarios: [], status: status.trim()};
   const insertedId = await model.inserir(novaNoticia);
   return noticiaAtributos({ _id: insertedId, ...novaNoticia });

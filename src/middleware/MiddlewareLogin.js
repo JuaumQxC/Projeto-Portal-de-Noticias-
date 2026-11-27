@@ -2,7 +2,8 @@
 
 export let sessaoLogin = {
     perfilAtual: null,
-    perfilNome: null
+    perfilNome: null,
+    privado: null
 }
 
 // export async function loginAtual (req, res){

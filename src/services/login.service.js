@@ -21,7 +21,8 @@ export async function login (id, senha){
     
     sessaoLogin.perfilAtual = usuario.perfil
     sessaoLogin.perfilNome = usuario.nome
-    console.log(sessaoLogin)
+    sessaoLogin.privado = usuario.privado
+    console.log(sessaoLogin.privado)
 
     return true
 }
