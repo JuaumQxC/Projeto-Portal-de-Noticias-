@@ -3,6 +3,7 @@
 // (find, insertOne, updateOne, deleteOne...). O service chama estas funções e cuida das regras de negócio.
 import { ObjectId } from 'mongodb';
 import { obterBanco } from '../config/database.js';
+import { comentario } from '../services/noticias.service.js';
 
 // Atalho para a coleção "noticias". Cada documento dela é uma noticias.
 function colecao() {
@@ -53,6 +54,18 @@ export async function postar(id, comentario) {
     return false;
   }
   // mongosh: db.noticias.deleteOne({ _id: ObjectId("65f1c2a9e4b0a1b2c3d4e5f6") })
-  const resultado = await colecao().updateOne({ _id: new ObjectId(id) }, { $push: {comentarios: comentario} });
+  const resultado = await colecao().updateOne({ _id: new ObjectId(id) }, { $push: {comentarios: {id: new ObjectId(), comentario: comentario.trim()}} });
   return resultado.matchedCount > 0;
+}
+
+export async function removerComent(idnot, idcoment) {
+  if (!ObjectId.isValid(idnot) || !ObjectId.isValid(idcoment)) {
+    return false;
+  }
+  const resultado = await colecao().updateOne(
+  { _id: new ObjectId(idnot) }, 
+  { $pull: {comentarios: {id: new ObjectId(idcoment)}} }
+  );
+
+  return resultado.modifiedCount > 0;
 }

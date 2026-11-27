@@ -10,6 +10,6 @@ router.get('/buscar/:id', controller.buscarNoticia)
 router.post('/editar/:id', controller.editar)
 router.post('/comentario/postar/:id', controller.postarComentario)
 router.delete('/deletar/:id', usuarioInfo.moderadorCheck, controller.deletar)
-// router.delete('comentario/deletar', controller.deletaComentario)
+router.delete('/comentario/deletar/:idnot/:idcoment',usuarioInfo.moderadorCheck ,controller.deletaComentario)
 
 export default router;

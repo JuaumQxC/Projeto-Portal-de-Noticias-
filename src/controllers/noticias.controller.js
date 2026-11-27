@@ -82,3 +82,17 @@ export async function postarComentario(req, res){
     res.status(500).json({ error: 'Erro interno ao comentar nesta noticia.' });
   }
 }
+
+export async function deletaComentario(req, res){
+  const {idnot, idcoment} = req.params
+
+  try {
+    res.json(await service.comentarioDel(idnot, idcoment))
+  } catch (error) {
+    if (error instanceof ErroDeValidacao) {
+      return res.status(400).json({ error: error.message });
+    }
+    console.error(error);
+    res.status(500).json({ error: 'Erro interno ao tentar deletar este comentário.'});
+  }
+}

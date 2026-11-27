@@ -116,3 +116,12 @@ export async function comentario(id, comentario){
   return 'comentário feito!'
 }
 
+export async function comentarioDel(idnot, idcoment){
+  let deletaNot = await model.removerComent(idnot, idcoment)
+
+  if (!deletaNot){
+    throw new ErroDeValidacao('Não foi achado nenhuma noticia e/ou comentário com esse id.')
+  }
+
+  return 'comentário deletado.'
+}
