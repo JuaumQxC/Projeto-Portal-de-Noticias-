@@ -12,7 +12,7 @@ function colecao() {
 
 export async function buscarTodas() {
   // mongosh: db.noticias.find()
-  return colecao().find().toArray();
+  return colecao().find({status: 'publicado'}).toArray();
 }
 
 export async function buscarPorId(id) {

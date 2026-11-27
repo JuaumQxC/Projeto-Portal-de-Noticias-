@@ -59,7 +59,9 @@ export async function procurarId(id) {
 
   if (notProcura == undefined) {
     throw new ErroDeValidacao("Não foi possível localizar esta noticia.");
-    
+  }
+  if (notProcura.status == "rascunho"){
+    throw new ErroDeValidacao("Está noticia não está disponível no momento.")
   }
   return notProcura
 }
